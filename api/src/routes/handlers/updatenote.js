@@ -8,7 +8,7 @@ module.exports = (req,res) => {
     const title = req.body.title;
     const description = req.body.description;
 
-    updatenote(id_user,title,description)
+    updatenote(id,id_user,title,description)
     .then(note => res.json({status:'OK', note:note}));
 
 }

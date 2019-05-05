@@ -32,8 +32,8 @@ module.exports = {
         return User.findByIdAndUpdate({_id:id},{$set:{name,surname,alias,password}})
     },
 
-    updatenote(id_user,title,description){
-        return Note.create({id_user,title,description});
+    updatenote(id,id_user,title,description){
+        return Note.findByIdAndUpdate({_id:id},{$set:{id_user,title,description}});
     },
 
     deleteuser(id){
