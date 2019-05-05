@@ -13,19 +13,27 @@ mongoose.connect('mongodb://localhost:27017/notesapp', {useNewUrlParser: true})
 
         const UserSchema = new Schema({
             name : String,
-            surname : String
+            surname : String,
+            alias: String,
+            password: String
+        });
+
+        const NoteSchema = new Schema({
+            title: String,
+            description: String
         });
         
-        const User = mongoose.model('user',UserSchema);
+        const User = mongoose.model('user', UserSchema);
+        const Note = mongoose.model('note', NoteSchema);
 
-        app.get('/api/list', (req,res) => {
+        app.get('/api/adminUser/list', (req,res) => {
 
             User.find()
             .then(users => res.json({status:'OK',list:users}));
 
         });
 
-        app.get('/api/retrieve/:id', (req,res) => {
+        app.get('/api/adminUser/retrieve/:id', (req,res) => {
 
             const id = req.params.id;
 
@@ -34,7 +42,7 @@ mongoose.connect('mongodb://localhost:27017/notesapp', {useNewUrlParser: true})
 
         });
 
-        app.post('/api/create', jsonBodyParser, (req,res) => {
+        app.post('/api/adminUser/create', jsonBodyParser, (req,res) => {
             
             const name = req.body.name;
             const surname = req.body.surname;
@@ -44,7 +52,7 @@ mongoose.connect('mongodb://localhost:27017/notesapp', {useNewUrlParser: true})
 
         });
 
-        app.put('/api/update/:id', jsonBodyParser, (req,res) => {
+        app.put('/api/adminUser/update/:id', jsonBodyParser, (req,res) => {
             
             const id = req.params.id;
             const name = req.body.name;
@@ -55,13 +63,59 @@ mongoose.connect('mongodb://localhost:27017/notesapp', {useNewUrlParser: true})
 
         });
 
-        app.delete('/api/delete/:id', (req,res) => {
+        app.delete('/api/adminUser/delete/:id', (req,res) => {
             
             const id = req.params.id;
 
             User.findByIdAndRemove({_id:id})
             .then(user => res.json({status:'OK',user:user}));
+
+        });
+
+        app.get('/api/adminNote/list', (req,res) => {
             
+            Note.find()
+            .then(notes => res.json({status:'OK', notes:notes}));
+
+        });
+
+        app.get('/api/adminNote/retrieve/:id', (req,res) => {
+
+            const id = req.params.id;
+
+            Note.findById(id)
+            .then(note => res.json({status:'OK', note:note}));
+
+        });
+
+        app.post('/api/adminNote/create', jsonBodyParser, (req,res) => {
+
+            const title = req.body.title;
+            const description = req.body.description;
+
+            Note.create({title,description})
+            .then(note => res.json({status:'OK', note:note}));
+
+        });
+
+        app.put('/api/adminNote/update/:id', jsonBodyParser, (req,res) => {
+
+            const id = req.params.id;
+            const title = req.body.title;
+            const description = req.body.description;
+
+            Note.findByIdAndUpdate({_id:id},{$set:{title,description}})
+            .then(note => res.json({status:'OK', note:note}));
+            
+        });
+
+        app.delete('/api/adminNote/delete/:id', (req,res) => {
+
+            const id = req.params.id;
+
+            Note.findByIdAndRemove({_id:id})
+            .then(note => res.json({status:'OK', note:note}));
+
         });
 
         app.listen(3000, () => console.log('server open in port 3000'));
